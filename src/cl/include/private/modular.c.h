@@ -76,9 +76,9 @@ static MODULAR_NUMBER_TYPE modMult(MODULAR_NUMBER_TYPE a, MODULAR_NUMBER_TYPE s,
 //  @details Also works if v = s.
 //  @return v = A*s % m
 #ifdef MODULAR_FIXED_SIZE
-static void modMatVec (MODULAR_NUMBER_TYPE A[N][N], MODULAR_NUMBER_TYPE s[N], MODULAR_NUMBER_TYPE v[N], MODULAR_NUMBER_TYPE m)
+static void modMatVec (const MODULAR_NUMBER_TYPE A[N][N], MODULAR_NUMBER_TYPE s[N], MODULAR_NUMBER_TYPE v[N], MODULAR_NUMBER_TYPE m)
 #else
-void modMatVec (size_t N, MODULAR_NUMBER_TYPE* A, MODULAR_NUMBER_TYPE* s, MODULAR_NUMBER_TYPE* v, MODULAR_NUMBER_TYPE m)
+void modMatVec (size_t N, const MODULAR_NUMBER_TYPE* A, MODULAR_NUMBER_TYPE* s, MODULAR_NUMBER_TYPE* v, MODULAR_NUMBER_TYPE m)
 #endif
 {
     MODULAR_NUMBER_TYPE x[MODULAR_FIXED_SIZE];     // Necessary if v = s
@@ -90,6 +90,33 @@ void modMatVec (size_t N, MODULAR_NUMBER_TYPE* A, MODULAR_NUMBER_TYPE* s, MODULA
     for (size_t i = 0; i < N; ++i)
         v[i] = x[i];
 }
+
+#ifdef __OPENCL_VERSION__
+
+//! @brief Matrix-vector modular multiplication
+//  @details Also works if v = s.
+//  @return v = A*s % m
+#ifdef MODULAR_FIXED_SIZE
+static void modMatVec_c (const __constant MODULAR_NUMBER_TYPE A[N][N], MODULAR_NUMBER_TYPE s[N], MODULAR_NUMBER_TYPE v[N], MODULAR_NUMBER_TYPE m)
+#else
+void modMatVec_c (size_t N, const __constant MODULAR_NUMBER_TYPE* A, MODULAR_NUMBER_TYPE* s, MODULAR_NUMBER_TYPE* v, MODULAR_NUMBER_TYPE m)
+#endif
+{
+    MODULAR_NUMBER_TYPE x[MODULAR_FIXED_SIZE];     // Necessary if v = s
+    for (size_t i = 0; i < N; ++i) {
+        x[i] = 0;
+        for (size_t j = 0; j < N; j++)
+            x[i] = modMult(MATRIX_ELEM(A,i,j), s[j], x[i], m);
+    }
+    for (size_t i = 0; i < N; ++i)
+        v[i] = x[i];
+}
+
+#else // !__OPENCL_VERSION__
+
+#define modMatVec_c modMatVec
+
+#endif // __OPENCL_VERSION__
 
 #undef MATRIX_ELEM
 #undef N

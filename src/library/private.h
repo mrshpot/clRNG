@@ -46,6 +46,7 @@
  *  @return     The value of err (for convenience).
  */
 clrngStatus clrngSetErrorString(cl_int err, const char* msg, ...);
+#define clrngSetErrorString3 clrngSetErrorString
 
 
 #endif
