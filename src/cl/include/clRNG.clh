@@ -41,8 +41,16 @@
 #ifndef CLRNG_CLH
 #define CLRNG_CLH
 
-#ifndef __OPENCL_C_VERSION__
+#if !defined(__OPENCL_C_VERSION__) && defined(__OPENCL_VERSION__)
+#define __OPENCL_C_VERSION__ __OPENCL_VERSION__
+#endif
+
+#if !defined(__OPENCL_C_VERSION__)
 #error "clRNG.clh can be included in device code only"
+#endif
+
+#if !defined(NULL)
+#define NULL 0
 #endif
 
 #define __CLRNG_DEVICE_API
@@ -51,7 +59,11 @@
 #define _CLRNG_FPTYPE cl_float
 #else
 #define _CLRNG_FPTYPE cl_double
+#if defined(cl_amd_fp64)
 #pragma OPENCL EXTENSION cl_amd_fp64 : enable
+#else
+#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+#endif
 #endif
 
 typedef double cl_double;

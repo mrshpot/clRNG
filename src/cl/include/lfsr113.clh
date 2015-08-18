@@ -108,9 +108,9 @@ clrngStatus clrngLfsr113MakeOverSubstreams(clrngLfsr113Stream* stream, size_t co
 clrngStatus clrngLfsr113CopyOverStreamsFromGlobal(size_t count, clrngLfsr113Stream* destStreams, __global const clrngLfsr113HostStream* srcStreams)
 {
 	//Check params
-	if (!destStreams)
+	if (destStreams == NULL)
 		return clrngSetErrorString(CLRNG_INVALID_VALUE, "clrngLfsr113CopyOverStreamsFromGlobal(): destStreams cannot be NULL");
-	if (!srcStreams)
+	if (srcStreams == NULL)
 		return clrngSetErrorString(CLRNG_INVALID_VALUE, "clrngLfsr113CopyOverStreamsFromGlobal(): srcStreams cannot be NULL");
 
 	for (size_t i = 0; i < count; i++) {
@@ -127,9 +127,9 @@ clrngStatus clrngLfsr113CopyOverStreamsFromGlobal(size_t count, clrngLfsr113Stre
 clrngStatus clrngLfsr113CopyOverStreamsToGlobal(size_t count, __global clrngLfsr113HostStream* destStreams, const clrngLfsr113Stream* srcStreams)
 {
     //Check params
-    if (!destStreams)
+    if (destStreams == NULL)
 	return clrngSetErrorString(CLRNG_INVALID_VALUE, "clrngLfsr113CopyOverStreamsToGlobal(): destStreams cannot be NULL");
-    if (!srcStreams)
+    if (srcStreams == NULL)
 	return clrngSetErrorString(CLRNG_INVALID_VALUE, "clrngLfsr113CopyOverStreamsToGlobal(): srcStreams cannot be NULL");
 
     for (size_t i = 0; i < count; i++) {
